@@ -13,42 +13,42 @@
    "eventWaitTime":"30000",
    "goPath":"chaincode",
    "caserver":{
-      "ca_url":"http://10.100.0.108:7054"
+      "ca_url":"http://13.82.50.105:7054"
    },
    "orderer":{
-      "orderer_url":"grpc://10.100.0.108:7050"
+      "orderer_url":"grpc://13.82.50.105:7050"
    },
    "peers":[
       {
-         "peer_url":"grpc://10.100.0.108:7051"
+         "peer_url":"grpc://13.82.50.105:7051"
       },
       {
-         "peer_url":"grpc://10.100.0.108:7058"
+         "peer_url":"grpc://13.82.50.105:7058"
       },
       {
-         "peer_url":"grpc://10.100.0.108:8058"
+         "peer_url":"grpc://13.82.50.105:8058"
       },
       {
-         "peer_url":"grpc://10.100.0.108:8056"
+         "peer_url":"grpc://13.82.50.105:8056"
       }
    ],
    "events":[
       {
-         "event_url":"grpc://10.100.0.108:7053"
+         "event_url":"grpc://13.82.50.105:7053"
       },
       {
-         "event_url":"grpc://10.100.0.108:7058"
+         "event_url":"grpc://13.82.50.105:7058"
       },
       {
-         "event_url":"grpc://10.100.0.108:8053"
+         "event_url":"grpc://13.82.50.105:8053"
       },
       {
-         "event_url":"grpc://10.100.0.108:8058"
+         "event_url":"grpc://13.82.50.105:8058"
       }
    ],
    "couchdb": [
       {
-         "couchdb_url":"http://10.100.0.108:5984"
+         "couchdb_url":"http://13.82.50.105:5984"
       }
    ],
    "users":[
