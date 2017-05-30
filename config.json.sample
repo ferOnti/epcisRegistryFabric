@@ -1,0 +1,85 @@
+{
+
+   "chainName":"fabric-client",
+   "chaincodeId":"mycc45",
+   "channelName":"mychannel",
+   "chaincodeVersion": "1.0",
+   "GOPATH":"../artifacts",
+   "chaincodePath":"epcis_registry",
+   "keyValueStore":"/tmp/fabric-client-kvs",
+   "orgsList": ["org1","org2"],
+   "channelConfigurationTxn": "./artifacts/channel/mychannel.tx",
+   "waitTime":"30000",
+   "eventWaitTime":"30000",
+   "goPath":"chaincode",
+   "caserver":{
+      "ca_url":"http://10.100.0.108:7054"
+   },
+   "orderer":{
+      "orderer_url":"grpc://10.100.0.108:7050"
+   },
+   "peers":[
+      {
+         "peer_url":"grpc://10.100.0.108:7051"
+      },
+      {
+         "peer_url":"grpc://10.100.0.108:7058"
+      },
+      {
+         "peer_url":"grpc://10.100.0.108:8058"
+      },
+      {
+         "peer_url":"grpc://10.100.0.108:8056"
+      }
+   ],
+   "events":[
+      {
+         "event_url":"grpc://10.100.0.108:7053"
+      },
+      {
+         "event_url":"grpc://10.100.0.108:7058"
+      },
+      {
+         "event_url":"grpc://10.100.0.108:8053"
+      },
+      {
+         "event_url":"grpc://10.100.0.108:8058"
+      }
+   ],
+   "couchdb": [
+      {
+         "couchdb_url":"http://10.100.0.108:5984"
+      }
+   ],
+   "users":[
+      {
+         "username":"admin",
+         "secret":"adminpw"
+      }
+   ],
+   "deployRequest":{
+      "functionName":"init",
+      "args":[
+         "a",
+         "100",
+         "b",
+         "200"
+      ]
+   },
+   "invokeRequest":{
+      "functionName":"invoke",
+      "args":[
+         "move",
+         "a",
+         "b",
+         "100"
+      ]
+   },
+   "queryRequest":{
+      "functionName":"invoke",
+      "args":[
+         "query",
+         "b"
+      ]
+   }
+}

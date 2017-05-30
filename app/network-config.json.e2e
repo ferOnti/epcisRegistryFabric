@@ -1,0 +1,43 @@
+{
+	"network-config": {
+		"orderer": {
+			"url": "grpcs://13.82.50.105:7050",
+			"server-hostname": "orderer.example.com",
+			"tls_cacerts": "../artifacts/tls/orderer/ca-cert.pem"
+		},
+		"Org0": {
+			"name": "peerOrg1",
+			"mspid": "Org0MSP",
+			"ca": "http://13.82.50.105:7054",
+			"peer1": {
+				"requests": "grpcs://13.82.50.105:7051",
+				"events": "grpcs://13.82.50.105:7053",
+				"server-hostname": "peer0.org1.example.com",
+				"tls_cacerts": "../artifacts/tls/peers/peer0/ca-cert.pem"
+			},
+			"peer2": {
+				"requests": "grpcs://13.82.50.105:8051",
+				"events": "grpcs://13.82.50.105:8053",
+				"server-hostname": "peer1.org1.example.com",
+				"tls_cacerts": "../artifacts/tls/peers/peer1/ca-cert.pem"
+			}
+		},
+		"Org1": {
+			"name": "peerOrg2",
+			"mspid": "Org1MSP",
+			"ca": "http://13.82.50.105:8054",
+			"peer1": {
+				"requests": "grpcs://13.82.50.105:8051",
+				"events": "grpcs://13.82.50.105:8053",
+				"server-hostname": "peer0.org2.example.com",
+				"tls_cacerts": "../artifacts/tls/peers/peer2/ca-cert.pem"
+			},
+			"peer2": {
+				"requests": "grpcs://13.82.50.105:8056",
+				"events": "grpcs://13.82.50.105:8058",
+				"server-hostname": "peer1.org2.example.com",
+				"tls_cacerts": "../artifacts/tls/peers/peer3/ca-cert.pem"
+			}
+		}
+	}
+}

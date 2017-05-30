@@ -1,0 +1,37 @@
+{
+  "name": "epcisRegistry",
+  "version": "1.0.0",
+  "description": "RESTful todoListApi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "start": "node server.js",
+    "start2": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/generalgmt/RESTfulAPITutorial.git"
+  },
+  "keywords": [
+    "RESTful",
+    "API",
+    "Tutorial"
+  ],
+  "author": "Fernando Ontiveros",
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-google": "^0.7.1",
+    "nodemon": "^1.11.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "express-handlebars": "3.0.0",
+    "fabric-ca-client": "1.0.0-alpha.0",
+    "fabric-client": "1.0.0-alpha",
+    "log4js": "^1.1.1",
+    "mongoose": "^4.7.2",
+    "nano": "^6.3.0",
+    "terminal-kit": "1.8.5"
+  }
+}

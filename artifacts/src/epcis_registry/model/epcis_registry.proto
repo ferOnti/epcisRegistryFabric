@@ -1,0 +1,15 @@
+syntax ="proto3";
+
+message EpcisObjectEvent {
+    string eventTime =1;
+    date recordTime =2;
+    string eventTimeZoneOffset =3;
+    string id =4;
+    repeated string epcList =5;
+    string action =6;
+    string bizStep =7;
+    string disposition =8;
+    string readPoint =9;
+    string bizLocation =10;
+    repeated string bizTransaction =11;
+}
