@@ -1,5 +1,6 @@
 {
 	"network-config": {
+		
 		"orderer": {
 			"url": "grpcs://13.82.50.105:7050",
 			"server-hostname": "orderer0",
