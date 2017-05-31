@@ -204,7 +204,7 @@ module.exports.invokeAddThing = function(res, args) {
 		txId: tx_id,
 		nonce: nonce
 	};
-	console.log(transactionRequest)
+	//console.log(transactionRequest)
 	return chain.sendTransactionProposal(transactionRequest).then(
 		(results) => {
 
@@ -247,40 +247,45 @@ module.exports.invokeAddThing = function(res, args) {
 			// fail the test
 			var deployId = tx_id.toString();
 
-			var eventPromises = [];
-			eventhubs.forEach((eh) => {
-				let txPromise = new Promise((resolve, reject) => {
-					let handle = setTimeout(reject, 30000);
+			//var eventPromises = [];
+			//eventhubs.forEach((eh) => {
+			//	let txPromise = new Promise((resolve, reject) => {
+			//		let handle = setTimeout(reject, 30000);
 
-					eh.registerTxEvent(deployId.toString(), (tx, code) => {
-						clearTimeout(handle);
-						eh.unregisterTxEvent(deployId);
+			//		eh.registerTxEvent(deployId.toString(), (tx, code) => {
+			//			clearTimeout(handle);
+			//			eh.unregisterTxEvent(deployId);
 
-						if (code !== 'VALID') {
-							logger.error('The balance transfer transaction was invalid, code = ' + code);
-							reject();
-						} else {
-							logger.info('The transaction %s has been committed on peer %s', tx, eh.ep._endpoint.addr);
-							resolve();
-						}
-					});
-				});
+			//			if (code !== 'VALID') {
+			//				logger.error('The balance transfer transaction was invalid, code = ' + code);
+			//				reject();
+			//			} else {
+			//				logger.info('The transaction %s has been committed on peer %s', tx, eh.ep._endpoint.addr);
+			//				resolve();
+			//			}
+			//		});
+			//	});
 
-				eventPromises.push(txPromise);
-			});
+			//	eventPromises.push(txPromise);
+			//});
 
-			var sendPromise = chain.sendTransaction(request);
-			return Promise.all([sendPromise].concat(eventPromises))
-			.then((results) => {
-				logger.debug(' event promise all complete for tx %s', deployId);
-				return results[0]; // the first returned value is from the 'sendPromise' which is from the 'sendTransaction()' call
+			return  chain.sendTransaction(request);
+			//return sendPromise.then( (results) =>
+			//	logger.info("event sendTransaction done for tx "+ deployId)
+			//	logger.info(results)
+			//).catch((err) => {logger.error(err); })
 
-			}).catch((err) => {
+			//return Promise.all([sendPromise].concat(eventPromises))
+			//.then((results) => {
+			//	logger.debug(' event promise all complete for tx %s', deployId);
+			//	return results[0]; // the first returned value is from the 'sendPromise' which is from the 'sendTransaction()' call
 
-				logger.error('Failed to send transaction and get notifications within the timeout period.');
-				throw new Error('Failed to send transaction and get notifications within the timeout period.');
+			//}).catch((err) => {
 
-			});
+			//	logger.error('Failed to send transaction and get notifications within the timeout period.');
+			//	throw new Error('Failed to send transaction and get notifications within the timeout period.');
+
+			//});
 
 		} else {
 			logger.error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
