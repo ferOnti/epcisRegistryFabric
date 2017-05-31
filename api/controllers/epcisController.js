@@ -48,7 +48,7 @@ exports.postEpcisEvent = function(req, res) {
     if (mime != "application/xml") {
         res.send( {"error":"xml is the only valid format to send epcEvents"})
     }
-    console.log (req.rawBody)
+    //console.log (req.rawBody)
     let xml = req.rawBody
 
     var args = [xml];

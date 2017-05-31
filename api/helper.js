@@ -188,7 +188,7 @@ module.exports.invokeAddThing = function(res, args) {
 	nonce = utils.getNonce();
 	tx_id = chain.buildTransactionID(nonce, adminUser);
 	utils.setConfigSetting('E2E_TX_ID', tx_id);
-	logger.info('setConfigSetting("E2E_TX_ID") = %s', tx_id);
+	//logger.info('setConfigSetting("E2E_TX_ID") = %s', tx_id);
 	logger.info(util.format('Sending transaction "%s"', tx_id));
 
 	//var epcid = Math.round(Math.random()*8999)+10000;
@@ -226,7 +226,7 @@ module.exports.invokeAddThing = function(res, args) {
 
 		if (all_good) {
 			var message = util.format('Successfully sent Proposal and received ProposalResponse: Status - %s ', proposalResponses[0].response.status);
-			logger.debug(message);
+			//logger.debug(message);
 
 			//next return api response
 			var response = {}
@@ -250,7 +250,7 @@ module.exports.invokeAddThing = function(res, args) {
 			var eventPromises = [];
 			eventhubs.forEach((eh) => {
 				let txPromise = new Promise((resolve, reject) => {
-					let handle = setTimeout(reject, 15000);
+					let handle = setTimeout(reject, 30000);
 
 					eh.registerTxEvent(deployId.toString(), (tx, code) => {
 						clearTimeout(handle);
