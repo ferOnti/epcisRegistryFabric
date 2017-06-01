@@ -23,7 +23,6 @@ var getStateDb = function () {
 	}).catch( function(err) {
 		console.log("statedb_savepoint")
 		console.log(err.message)
-		reject(err)
     })
 }
 var byBizStep = function (groupLevel) {
@@ -57,7 +56,11 @@ module.exports.getStats = function () {
 	var stats = {}
 	return byBizStep(0)
 		.then((data) => {
-			stats.count = data.rows[0].value
+			if (data.rows.length > 0) {
+				stats.count = data.rows[0].value
+			} else {
+				stats.count = 0
+			}
 		})
 		.then( () => {
 			return byBizStep(1)
@@ -78,9 +81,9 @@ module.exports.getStats = function () {
 			return (stats)
 		})
 	.catch( function(err) {
-		console.log("statedb_savepoint")
+		console.log("getStats")
 		console.log(err.message)
-		reject(err)
+		//reject(err)
     })
 
 }
