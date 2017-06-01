@@ -17,7 +17,7 @@ exports.stats = function(req, res) {
 
 exports.query = function(req, res) {
     var response = res
-    console.log(response)
+    
     return couchdb.getEpcisStatesIds().then( (data) => {
       console.log(data)
       response.send (data)

@@ -60,20 +60,21 @@ app.use(function(req, res) {
     res.status(404).send({url: req.originalUrl + ' not found'})
 });
 
-
-helper.getOrg("org1")
+couchdb.createViews()
+  .then(couchdb.getStats)
+  .then(() => {
+    helper.getOrg("org1")
+  })
+  //.then(() => {
+  //  couchdb.getEpcid("urn:epc:id:sgtin:41065887.79796.0000000001")
+  // })
+  //.then(couchdb.checkViewForChaincode)
+  //.then(couchdb.getEpcisStatesIds)
+  //.then(couchdb.getEpcisStates)
   .then(() => {
     logger.info('*** server running on port %d ***', port)
     app.listen(port);
   })
-  .then(() => {
-    couchdb.getEpcid("urn:epc:id:sgtin:41065887.79796.0000000001")
-   })
-  //.then(couchdb.checkViewForChaincode)
-  //.then(couchdb.getEpcisStatesIds)
-  //.then(couchdb.getEpcisStates)
-  //.then(couchdb.getStats)
-  .then((n) => {console.log(n); logger.info("ready " + n + " Docs")})
 
 /*
 
