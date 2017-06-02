@@ -170,17 +170,6 @@ module.exports.getOrg = function(org) {
 	})
 };
 
-module.exports.invokeTest = function(data) {
-	var res = {};
-	res.time = new Date();
-	res.message = "hello world"
-
-	this.getOrg('org2').then( (results) => {
-		res.food = "italian"
-		return res;
-	})
-    //return res;
-};
 
 module.exports.invokeAddThing = function(res, args) {
 	logger.info('invoke addThing with user: "%s" from %s', adminUser._name, adminUser._mspImpl._id);
@@ -188,12 +177,8 @@ module.exports.invokeAddThing = function(res, args) {
 	nonce = utils.getNonce();
 	tx_id = chain.buildTransactionID(nonce, adminUser);
 	utils.setConfigSetting('E2E_TX_ID', tx_id);
-	//logger.info('setConfigSetting("E2E_TX_ID") = %s', tx_id);
 	logger.info(util.format('Sending transaction "%s"', tx_id));
 
-	//var epcid = Math.round(Math.random()*8999)+10000;
-	//var args = null
-	//args = this.getArgs([''+epcid,'delivery','lcn:000101','po0001','APPLE','1234','0001'])
 	// send proposal to endorser
 	var transactionRequest = {
 		chaincodeId: config.chaincodeId,
@@ -204,7 +189,6 @@ module.exports.invokeAddThing = function(res, args) {
 		txId: tx_id,
 		nonce: nonce
 	};
-	//console.log(transactionRequest)
 	return chain.sendTransactionProposal(transactionRequest).then(
 		(results) => {
 
@@ -217,7 +201,7 @@ module.exports.invokeAddThing = function(res, args) {
 			let one_good = false;
 			if (proposalResponses && proposalResponses[0].response && proposalResponses[0].response.status === 200) {
 				one_good = true;
-				logger.info('transaction proposal was good');
+				//logger.info('transaction proposal was good');
 			} else {
 				logger.error('transaction proposal was bad');
 			}
@@ -226,14 +210,13 @@ module.exports.invokeAddThing = function(res, args) {
 
 		if (all_good) {
 			var message = util.format('Successfully sent Proposal and received ProposalResponse: Status - %s ', proposalResponses[0].response.status);
-			//logger.debug(message);
 
 			//next return api response
 			var response = {}
 			response.message = message;
-			response.txId = transactionRequest.txId;
+			response.txId    = transactionRequest.txId;
 			response.function = transactionRequest.fcn;
-			response.args = transactionRequest.args;
+			response.args     = transactionRequest.args;
 			res.send(response)
 			//next(true)
 
@@ -292,14 +275,11 @@ module.exports.invokeAddThing = function(res, args) {
 			throw new Error('Failed to send Proposal or receive valid response. Response null or status is not 200. exiting...');
 		}
 	}, (err) => {
-
 		logger.error('Failed to send proposal due to error: ' + err.stack ? err.stack : err);
 		throw new Error('Failed to send proposal due to error: ' + err.stack ? err.stack : err);
-
 	}).then((response) => {
 		if (response.status === 'SUCCESS') {
 			logger.info('Successfully sent transaction to the orderer.');
-
 		} else {
 			logger.error('Failed to order the transaction. Error code: ' + response.status);
 			throw new Error('Failed to order the transaction. Error code: ' + response.status);
@@ -307,6 +287,8 @@ module.exports.invokeAddThing = function(res, args) {
 	}, (err) => {
 		logger.error('Failed to send transaction due to error: ' + err.stack ? err.stack : err);
 		throw new Error('Failed to send transaction due to error: ' + err.stack ? err.stack : err);
+	}).catch((err)=> {
+		logger.error('**error: ' + err.stack ? err.stack : err);
 	});
 };
 
