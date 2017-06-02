@@ -27,6 +27,7 @@ exports.home = function(req, res, next) {
 	var response = res
     return couchdb.getStats().then( (data) => {
         params.blockNumber = data.blockNumber
+        params.txNum = data.txNum
         params.countThings = data.count
         //convert byBizStep to mustache iterate format
         var byBizStep = []
