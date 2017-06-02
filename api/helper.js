@@ -173,7 +173,6 @@ module.exports.getOrg = function(org) {
 
 module.exports.invokeAddThing = function(res, args) {
 	logger.info('invoke addThing with user: "%s" from %s', adminUser._name, adminUser._mspImpl._id);
-
 	nonce = utils.getNonce();
 	tx_id = chain.buildTransactionID(nonce, adminUser);
 	utils.setConfigSetting('E2E_TX_ID', tx_id);
@@ -213,10 +212,10 @@ module.exports.invokeAddThing = function(res, args) {
 
 			//next return api response
 			var response = {}
-			response.message = message;
-			response.txId    = transactionRequest.txId;
-			response.function = transactionRequest.fcn;
-			response.args     = transactionRequest.args;
+			//response.message = message;
+			response.txId       = transactionRequest.txId;
+			//response.function = transactionRequest.fcn;
+			//response.args     = transactionRequest.args;
 			res.send(response)
 			//next(true)
 
