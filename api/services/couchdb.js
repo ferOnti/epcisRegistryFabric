@@ -51,6 +51,33 @@ var byBizStep = function (groupLevel) {
 
 }
 
+var byBizTx = function (groupLevel, limit=100) {
+	return new Promise((resolve, reject) => {
+		var keys = []
+		var options = {
+			"reduce" : true,
+			"group_level" : groupLevel,
+			"limit" : limit
+		}
+		couchdb.view(chaincodeId, 'byBizTx', options, function(err, body){    
+	    	if (err){
+    	  		console.log(err)
+    	  		reject(err)
+    		} else {
+        		var rows = body.rows; //the rows returned
+        		console.log(body.rows)
+	        	//for (var i=0; i<rows.length; i++ ) {
+	        	//	var epcid = rows[i].key.replace(chaincodeId,"").replace("\u0000","")
+    	      	//	keys.push(epcid)
+        		//}
+        		//console.log(keys)
+        		resolve(body)
+    		}
+		})
+	})
+
+}
+
 module.exports.getStats = function () {
 	console.log("getStats")
 	var stats = {}
@@ -71,6 +98,18 @@ module.exports.getStats = function () {
 				var key = data.rows[i].key[0]
 				var value = data.rows[i].value
 				stats.byBizStep[key] = value
+			}
+		})
+		.then( () => {
+			return byBizTx(2, 100)
+		})
+		.then((data) => {
+			stats.byBizTx = []
+			for (var i=0; i<data.rows.length; i++ ) {
+				var key = data.rows[i].key[0]
+				var key2 = data.rows[i].key[1]
+				var value = data.rows[i].value
+				stats.byBizTx.push({key:key, key2:key2, value:value})
 			}
 		})
 		.then( getStateDb )

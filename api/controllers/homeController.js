@@ -35,6 +35,9 @@ exports.home = function(req, res, next) {
           byBizStep.push( {"key": key, "value": data.byBizStep[key]})
         }
         params.byBizStep   = byBizStep
+
+        //byBizTx
+        params.byBizTx   = data.byBizTx
       	response.render('hello', params );
     }).catch( function(err) {
       console.log(err)
