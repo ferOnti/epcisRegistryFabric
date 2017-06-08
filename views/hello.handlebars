@@ -8,7 +8,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Bootstrap theme</a>
+            <a class="navbar-brand" href="#">Fabric Client</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -37,6 +37,12 @@
 
     <div><span class="label label-info">POST</span>  /api/event    </div>
 
+    <br>
+    <div><span class="label label-success">GET</span>  /api/bizTx/aHR0cDovL2VwY2lzLm1vaml4LmNvbS9wby8wMDAwMDAx   (id in base64)</div>
+
+    <div><span class="label label-info">POST</span>  /api/bizTx    (id in the body)</div>
+
+
     <div class="page-header">
         <h3>Info</h3>
     </div>
@@ -58,9 +64,15 @@
     
     <br>
     <table class="table table-bordered">
-      <tr><th>BizTransaction</th><th>count</th></tr>
+      <tr><th>BizTransaction</th><th>BizStep</th><th>count</th></tr>
       {{#byBizTx}}
-      <tr><td>{{key}}</td><td>{{key2}}</td><td>{{value}}</td></tr>
+      <tr>
+        <td>
+            <a href="/bizTx/{{id}}">{{key}}</a>
+        </td>
+        <td>{{key2}}</td>
+        <td>{{value}}</td>
+      </tr>
       {{/byBizTx}}
     </table>
     

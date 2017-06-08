@@ -38,12 +38,6 @@ var byBizStep = function (groupLevel) {
     	  		reject(err)
     		} else {
         		var rows = body.rows; //the rows returned
-        		//console.log(body.rows)
-	        	//for (var i=0; i<rows.length; i++ ) {
-	        	//	var epcid = rows[i].key.replace(chaincodeId,"").replace("\u0000","")
-    	      	//	keys.push(epcid)
-        		//}
-        		//console.log(keys)
         		resolve(body)
     		}
 		})
@@ -65,12 +59,6 @@ var byBizTx = function (groupLevel, limit=100) {
     	  		reject(err)
     		} else {
         		var rows = body.rows; //the rows returned
-        		console.log(body.rows)
-	        	//for (var i=0; i<rows.length; i++ ) {
-	        	//	var epcid = rows[i].key.replace(chaincodeId,"").replace("\u0000","")
-    	      	//	keys.push(epcid)
-        		//}
-        		//console.log(keys)
         		resolve(body)
     		}
 		})
@@ -101,7 +89,7 @@ module.exports.getStats = function () {
 			}
 		})
 		.then( () => {
-			return byBizTx(2, 100)
+			return byBizTx(2, 50)
 		})
 		.then((data) => {
 			stats.byBizTx = []
@@ -116,14 +104,50 @@ module.exports.getStats = function () {
 		.then((data) => {
 			stats.blockNumber = data.BlockNum
 			stats.txNum = data.TxNum
-			console.log(stats)
+			//console.log(stats)
 			return (stats)
 		})
 	.catch( function(err) {
 		console.log("getStats")
 		console.log(err.message)
-		//reject(err)
     })
+
+}
+
+module.exports.getBizTx = function(id, includeDocs) {
+	return new Promise((resolve, reject) => {
+		var keys = []
+		var options = {
+			"reduce" : false,
+			"include_docs" : includeDocs,
+			"inclusive_end": false,
+			"startkey": [id, ""],
+			"endkey": [id, "\uffff"]
+		}
+
+		couchdb.view(chaincodeId, 'byBizTx', options, function(err, body){    
+	    	if (err){
+    	  		console.log(err)
+    	  		reject(err)
+    		} else {
+        		var rows = body.rows; //the rows returned
+        		var results = []
+	        	for (var i=0; i<rows.length; i++ ) {
+	        		parsedDoc = {}
+	        		if (includeDocs) {
+	        			parsedDoc.chaincodeId = rows[i].doc.chaincodeid;
+	        			for (key in rows[i].doc.data) {
+	        				parsedDoc[key] = rows[i].doc.data[key];
+	        			}
+	        		} else {
+	        			parsedDoc = rows[i]
+	        		}
+    	      		results.push(parsedDoc)
+        		}
+        		resolve(results)
+    		}
+		})
+	})
 
 }
 
@@ -131,7 +155,7 @@ module.exports.getEpcid = function (id) {
 	console.log("getEpcid")
 
 	let docId = chaincodeId + "\u0000" + id
-	console.log("  get event id: " + docId)
+	console.log("  get epcid: " + docId)
 	return new Promise((resolve, reject) => {
 		couchdb.get(docId, {'include_docs': true}, function(err, body){    
 	    	if (err){
@@ -141,7 +165,7 @@ module.exports.getEpcid = function (id) {
 	    	  	console.log(err)
     		  	reject(err)
     		} else {
-        		console.log(body)
+        		//console.log(body)
         		resolve(body)
     		}
 		})

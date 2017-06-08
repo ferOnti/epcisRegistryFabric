@@ -15,6 +15,9 @@ module.exports = function(app) {
 	app.route('/api/query')
 		.get(epcisController.query);
 
+	app.route('/bizTx/:id')
+		.get(homeController.bizTx);
+
 	// epcis Routes
 	app.route('/api/stats')
 		.get(epcisController.stats);
@@ -24,4 +27,10 @@ module.exports = function(app) {
 
     app.route('/api/epcid/:id')
         .get(epcisController.getEpcid);
+
+    app.route('/api/bizTx/:id')
+        .get(epcisController.bizTxBase64);
+    
+    app.route('/api/bizTx')
+        .post(epcisController.bizTx);
 };

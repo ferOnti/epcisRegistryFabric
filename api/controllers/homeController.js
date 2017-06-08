@@ -1,6 +1,7 @@
 'use strict';
 
 var couchdb = require('../services/couchdb')
+var base64 = require('base-64');
 
 /*
   // epcis Routes
@@ -37,12 +38,52 @@ exports.home = function(req, res, next) {
         params.byBizStep   = byBizStep
 
         //byBizTx
-        params.byBizTx   = data.byBizTx
+        var byBizTx   = []
+        for (var key in data.byBizTx) {
+          byBizTx.push( {
+            "id": base64.encode(data.byBizTx[key].key),
+            "key": data.byBizTx[key].key, 
+            "key2": data.byBizTx[key].key2, 
+            "value": data.byBizTx[key].value
+          })
+        }
+        params.byBizTx   = byBizTx
+
       	response.render('hello', params );
     }).catch( function(err) {
       console.log(err)
 		response.render('hello', params );
     })
+};
+
+
+exports.bizTx = function(req, res, next) {
+  var params = {}
+  params.id = base64.decode(req.params.id)
+  params.base64Id = req.params.id
+
+  var response = res
+    return couchdb.getBizTx(params.id, true).then( (data) => {
+        //byBizTx
+        /*
+        var byBizTx   = []
+        for (var key in data) {
+          byBizTx.push( {
+            "id": data[key].id,
+            "bizTx": data[key].key[0], 
+            "bizStep": data[key].key[1]
+          })
+        }
+        */
+        //console.log(params)
+        params.byBizTx   = data
+
+        response.render('bizTx', params );
+    }).catch( function(err) {
+      console.log(err)
+    response.render('bizTx', params );
+    })
+
 };
 
 

@@ -5,12 +5,13 @@ var mongoose = require('mongoose'),
 
 var helper = require('../helper.js');
 var couchdb = require('../services/couchdb')
+var base64 = require('base-64');
 
 
 exports.stats = function(req, res) {
     var response = res
     return couchdb.getStats().then( (data) => {
-      console.log(data)
+      //console.log(data)
       response.send (data)
     })
 }
@@ -23,6 +24,38 @@ exports.query = function(req, res) {
       response.send (data)
     })
 }
+
+exports.bizTx = function(req, res, next) {
+  var params = {}
+  params.id = req.rawBody
+
+  var response = res
+    return couchdb.getBizTx(params.id, true).then( (data) => {
+        params.byBizTx   = data
+
+        response.send(data );
+    }).catch( function(err) {
+      console.log(err)
+      response.send(err );
+    })
+
+};
+
+exports.bizTxBase64 = function(req, res, next) {
+  var params = {}
+  params.id = base64.decode(req.params.id)
+
+  var response = res
+    return couchdb.getBizTx(params.id, true).then( (data) => {
+        params.byBizTx   = data
+
+        response.send(data );
+    }).catch( function(err) {
+      console.log(err)
+      response.send(err );
+    })
+
+};
 
 
 exports.getEpcid = function(req, res) {
