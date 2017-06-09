@@ -4,21 +4,21 @@ module.exports = function(app) {
     let epcisController = require('../controllers/epcisController');
     let homeController  = require('../controllers/homeController');
 
-	// epcis Routes
+	// home Route
 	app.route('/')
 		.get(homeController.home);
 
-	// epcis Routes
+	// pages Routes
 	app.route('/event/:id')
 		.get(epcisController.query);
 
-	app.route('/api/query')
-		.get(epcisController.query);
+	app.route('/supplyChain')
+		.get(homeController.supplyChain);
 
 	app.route('/bizTx/:id')
 		.get(homeController.bizTx);
 
-	// epcis Routes
+	// api Routes
 	app.route('/api/stats')
 		.get(epcisController.stats);
 

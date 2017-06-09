@@ -1,8 +1,5 @@
 'use strict';
 
-var mongoose = require('mongoose'),
-    Task = mongoose.model('Tasks');
-
 var helper = require('../helper.js');
 var couchdb = require('../services/couchdb')
 var base64 = require('base-64');

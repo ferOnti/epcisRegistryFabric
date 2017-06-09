@@ -3,15 +3,6 @@
 var couchdb = require('../services/couchdb')
 var base64 = require('base-64');
 
-/*
-  // epcis Routes
-  app.route('/event/:id')
-    .get(home.query);
-
-  app.route('/api/query')
-    .get(home.query);
-*/
-
 
 exports.home = function(req, res, next) {
 	var params = {}
@@ -23,7 +14,8 @@ exports.home = function(req, res, next) {
 
 	params.channelName = channelId
 	params.chaincodeId = chaincodeId
-	params.couchdbUrl  = couchdbUrl
+  params.couchdbUrl  = couchdbUrl
+  params.menuHome    = true
 
 	var response = res
     return couchdb.getStats().then( (data) => {
@@ -60,22 +52,11 @@ exports.home = function(req, res, next) {
 exports.bizTx = function(req, res, next) {
   var params = {}
   params.id = base64.decode(req.params.id)
-  params.base64Id = req.params.id
+  params.base64Id  = req.params.id
+  params.menuBizTx = true
 
   var response = res
     return couchdb.getBizTx(params.id, true).then( (data) => {
-        //byBizTx
-        /*
-        var byBizTx   = []
-        for (var key in data) {
-          byBizTx.push( {
-            "id": data[key].id,
-            "bizTx": data[key].key[0], 
-            "bizStep": data[key].key[1]
-          })
-        }
-        */
-        //console.log(params)
         params.byBizTx   = data
 
         response.render('bizTx', params );
@@ -87,6 +68,8 @@ exports.bizTx = function(req, res, next) {
 };
 
 
-exports.query = function(req, res, next) {
-    return res.render('query');   // this is the important part
+exports.supplyChain = function(req, res, next) {
+    var params = {}
+    params.menuSupply = true
+    return res.render('supplyChain', params);   // this is the important part
 };
