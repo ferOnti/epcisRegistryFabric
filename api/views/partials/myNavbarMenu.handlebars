@@ -1,0 +1,22 @@
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Fabric Client</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li {{#if menuHome}}class="active"{{/if}}><a href="/">Home</a></li>
+                <li {{#if menuBizTx}}class="active"{{/if}}><a href="/bizTx/aHR0cDovL2VwY2lzLm1vaml4LmNvbS9wby8wMDAwMDAx">bizTx</a></li>
+                <li {{#if menuSupply}}class="active"{{/if}}><a href="/supplyChain">Supply Chain</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+

@@ -3,9 +3,14 @@ var app = express()
 var path = require('path');
 
 var exphbs = require('express-handlebars');
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+let hbsOptions = {
+  defaultLayout: 'main', 
+  layoutsDir:"api/views/layouts/",
+  partialsDir:"api/views/partials/"
+}
+app.engine('handlebars', exphbs(hbsOptions));
 app.set('view engine', 'handlebars');
-app.set('views', path.join(__dirname, 'api/views'));
+app.set('views', path.join(__dirname, 'api/views/'));
 port = process.env.PORT || 3000,
 
 bodyParser = require('body-parser'),

@@ -1,0 +1,26 @@
+<!-- Fixed navbar menu -->
+{{> myNavbarMenu }}
+
+<div class="container theme-showcase" role="main">
+<br>
+    <div class="page-header">
+        <h3>Query by bizTransaction {{id}}</h3>
+        <a href="/api/bizTx/{{base64Id}}">{{id}}</a><br>
+    </div>
+
+    <table class="table table-bordered">
+      <tr><th>Epcid</th><th>BizStep </th><th>Disposition </th><th>BizLocation </th></tr>
+      {{#byBizTx}}
+      <tr>
+        <td><a href="/api/epcid/{{epcid}}">{{epcid}}</td>
+        <td>{{bizStep}}</td>
+        <td>{{disposition}}</td>
+        <td>{{bizLocation}}</td>
+      </tr>
+      {{/byBizTx}}
+    </table>
+    
+    <br>
+
+</div> <!-- /container -->
+
