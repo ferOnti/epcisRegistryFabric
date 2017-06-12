@@ -68,9 +68,9 @@ func (t *EpcisChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
     		return t.addEpcThing(stub, args)
     	case "delete":
     		return t.delete(stub, args)
-	case "getHistory" :
-		return t.getHistory(stub, args)
-    	case "readEpcThing":
+	//case "getHistory" :
+	//	return t.getHistory(stub, args)
+    case "readEpcThing":
     		return t.readEpcThing(stub, args)
 
 	}
@@ -156,6 +156,7 @@ func (t *EpcisChaincode) readEpcThing(stub shim.ChaincodeStubInterface, args []s
 // ===============================================
 // History of an EPCIS
 // ===============================================
+/*
 func (t *EpcisChaincode) getHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) < 1 {
@@ -178,7 +179,7 @@ func (t *EpcisChaincode) getHistory(stub shim.ChaincodeStubInterface, args []str
 
 	bArrayMemberAlreadyWritten := false
 	for resultsIterator.HasNext() {
-		response, _,  err := resultsIterator.Next()
+		response, err := resultsIterator.Next()
 		if err != nil {
 			return shim.Error(err.Error())
 		}
@@ -220,7 +221,7 @@ func (t *EpcisChaincode) getHistory(stub shim.ChaincodeStubInterface, args []str
 
 	return shim.Success(buffer.Bytes())
 }
-
+*/
 
 
 
