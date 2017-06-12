@@ -178,7 +178,7 @@ func (t *EpcisChaincode) getHistory(stub shim.ChaincodeStubInterface, args []str
 
 	bArrayMemberAlreadyWritten := false
 	for resultsIterator.HasNext() {
-		response, err := resultsIterator.Next()
+		response, _,  err := resultsIterator.Next()
 		if err != nil {
 			return shim.Error(err.Error())
 		}
