@@ -301,4 +301,46 @@ module.exports.createViews = function () {
 	
 }
 
+module.exports.supplyChainDashboard = function(id, includeDocs) {
+	result = {}
+	result.step1 = 0;
+	result.step2 = 0;
+	result.step3 = 0;
+	result.step4 = 0;
+	result.step5 = 0;
+	result.step6 = 0;
+	result.step7 = 0;
+	result.step8 = 0;
+	result.step9 = 0;
+	result.step10 = 0;
+	result.step11 = 0;
+	result.step12 = 0;
+	result.step13 = 0;
+	result.step14 = 0;
+	result.step15 = 0;
+	result.step16 = 0;
+	result.step17 = 0;
+	result.step18 = 0;
+	result.step19 = 0;
+
+	return new Promise((resolve, reject) => {
+		var keys = []
+		var options = {
+			"reduce" : true,
+			"group_level" : 1
+		}
+		couchdb.view(chaincodeId, 'byBizStep', options, function(err, body){    
+	    	if (err){
+    	  		console.log(err)
+    	  		reject(err)
+    		} else {
+        		var rows = body.rows; //the rows returned
+        		result.step1 = body.rows[0].value;
+        		resolve(result)
+    		}
+		})
+	})
+
+}
+
 

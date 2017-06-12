@@ -1,0 +1,94 @@
+.table tbody tr > td.success {
+  background-color: #dff0d8 !important;
+}
+
+.table tbody tr > td.error {
+  background-color: #f2dede !important;
+}
+
+.table tbody tr > td.warning {
+  background-color: #fcf8e3 !important;
+}
+
+.table tbody tr > td.info {
+  background-color: #d9edf7 !important;
+}
+
+.table tbody tr > td.infobold {
+  background-color: #c9dde7 !important;
+}
+
+.table tbody tr > th.infobold {
+  background-color: #c9dde7 !important;
+}
+
+.table-hover tbody tr:hover > td.success {
+  background-color: #d0e9c6 !important;
+}
+
+.table-hover tbody tr:hover > td.error {
+  background-color: #ebcccc !important;
+}
+
+.table-hover tbody tr:hover > td.warning {
+  background-color: #faf2cc !important;
+}
+
+.table-hover tbody tr:hover > td.info {
+  background-color: #c4e3f3 !important;
+}
+
+.table tbody tr > td.step {
+  background-color: #f0f0e8 !important;
+}
+
+.table tbody tr > td.step {
+  background-color: #f0f0e8 !important;
+}
+
+.table tbody tr > td.stepColumn {
+  background-color: #e0e0e0 !important;
+}
+
+div.stepNumber {
+  text-align: center;
+  font-size: 85%;
+  width: 100%;
+}
+
+div.stepValue {
+  text-align: center;
+  font-size: 120%;
+  font-weight: 600;
+  width: 100%;
+}
+
+/* scrolling table */
+
+.scrolling table {
+    table-layout: inherit;
+ *margin-left: -100px;/*ie7*/
+}
+.scrolling td, th {
+  vertical-align: top;
+  padding: 15px;
+  min-width: 100px;
+}
+.scrolling th {
+  position: absolute;
+ *position: relative; /*ie7*/
+  left: 0;
+  vertical-align: center;
+  width: 120px;
+}
+.outer {
+  position: relative
+}
+.inner {
+  overflow-x: auto;
+  overflow-y: visible;
+  margin-left: 120px;
+}
+
+
+
