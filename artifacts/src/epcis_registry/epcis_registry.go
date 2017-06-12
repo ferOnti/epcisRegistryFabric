@@ -156,7 +156,7 @@ func (t *EpcisChaincode) readEpcThing(stub shim.ChaincodeStubInterface, args []s
 // ===============================================
 // History of an EPCIS
 // ===============================================
-func (t *ExtendedChaincode) getHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *EpcisChaincode) getHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	if len(args) < 1 {
 		return shim.Error("Incorrect number of arguments. Expecting 1")
