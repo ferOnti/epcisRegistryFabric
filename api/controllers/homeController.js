@@ -71,5 +71,21 @@ exports.bizTx = function(req, res, next) {
 exports.supplyChain = function(req, res, next) {
     var params = {}
     params.menuSupply = true
-    return res.render('supplyChain', params);   // this is the important part
+
+    var response = res
+
+    return couchdb.supplyChainDashboard().then( (data) => {
+        params.data   = data
+console.log(data)
+        response.render('supplyChain', params );
+    }).catch( function(err) {
+      console.log(err)
+    response.render('supplyChain', params );
+    })
+
 };
+
+
+
+
+
