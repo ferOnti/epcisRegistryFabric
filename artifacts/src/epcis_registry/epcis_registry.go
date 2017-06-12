@@ -68,6 +68,8 @@ func (t *EpcisChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
     		return t.addEpcThing(stub, args)
     	case "delete":
     		return t.delete(stub, args)
+	case "getHistory" :
+		return t.getHistory(stub, args)
     	case "readEpcThing":
     		return t.readEpcThing(stub, args)
 
@@ -150,6 +152,77 @@ func (t *EpcisChaincode) readEpcThing(stub shim.ChaincodeStubInterface, args []s
 
 	return shim.Success(valAsbytes)
 }
+
+// ===============================================
+// History of an EPCIS
+// ===============================================
+func (t *ExtendedChaincode) getHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+
+	if len(args) < 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	epcisId := args[0]
+
+	fmt.Printf("- start getHistoryForEpcis: %s\n", epcisId)
+
+	resultsIterator, err := stub.GetHistoryForKey(epcisId)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer resultsIterator.Close()
+
+	// buffer is a JSON array containing historic values
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+
+	bArrayMemberAlreadyWritten := false
+	for resultsIterator.HasNext() {
+		response, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+		// Add a comma before array members, suppress it for the first array member
+		if bArrayMemberAlreadyWritten == true {
+			buffer.WriteString(",")
+		}
+		buffer.WriteString("{\"TxId\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(response.TxId)
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"Value\":")
+		// if it was a delete operation on given key, then we need to set the
+		//corresponding value null. Else, we will write the response.Value
+		//as-is (as the Value itself a JSON marble)
+		if response.IsDelete {
+			buffer.WriteString("null")
+		} else {
+			buffer.WriteString(string(response.Value))
+		}
+
+		buffer.WriteString(", \"Timestamp\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(time.Unix(response.Timestamp.Seconds, int64(response.Timestamp.Nanos)).String())
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"IsDelete\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(strconv.FormatBool(response.IsDelete))
+		buffer.WriteString("\"")
+
+		buffer.WriteString("}")
+		bArrayMemberAlreadyWritten = true
+	}
+	buffer.WriteString("]")
+
+	fmt.Printf("- getHistoryForEpcis returning:\n%s\n", buffer.String())
+
+	return shim.Success(buffer.Bytes())
+}
+
+
+
 
 func main() {
 	err := shim.Start(new(EpcisChaincode))
