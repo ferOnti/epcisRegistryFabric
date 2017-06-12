@@ -5,8 +5,8 @@ import (
 	//"encoding/json"
 	//"time"
 	"fmt"
-	//"strconv"
-
+	"strconv"
+	"bytes"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"epcis_registry/model"
