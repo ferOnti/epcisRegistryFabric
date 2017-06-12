@@ -5,3 +5,8 @@ node_modules
 .npm
 ._*
 .DS_Store
+.idea
+api/network-config.json
+bulk.sh
+config.json
+yarn.lock
