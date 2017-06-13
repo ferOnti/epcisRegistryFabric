@@ -263,6 +263,9 @@ module.exports.createViews = function () {
 	mapFunction = fs.readFileSync("./api/services/byBizTx.js",'utf8')
 	byBizTxMap  = mapFunction.replace('CHAINCODE_ID', chaincodeId) 
 
+	mapFunction = fs.readFileSync("./api/services/byParentId.js",'utf8')
+	byParentId  = mapFunction.replace('CHAINCODE_ID', chaincodeId) 
+
 	return new Promise((resolve, reject) => {
 		couchdb.get('_design/'+chaincodeId, function(err, doc) {
 	  		if (err && err.statusCode == 404) {
@@ -275,6 +278,10 @@ module.exports.createViews = function () {
 	             		},
 	             		byBizTx: {
 	                		"map": byBizTxMap,
+	                		"reduce" : "_sum"
+	             		},
+	             		byParentId: {
+	                		"map": byParentId,
 	                		"reduce" : "_sum"
 	             		}
 	          		}
@@ -335,7 +342,11 @@ module.exports.supplyChainDashboard = function(id, includeDocs) {
     	  		reject(err)
     		} else {
         		var rows = body.rows; //the rows returned
-        		result.step1 = body.rows[0].value;
+        		if (body.rows && body.rows.length >0) {
+	        		result.step1 = body.rows[0].value;
+        		} else {
+        			result.step1 = 0
+        		}
         		resolve(result)
     		}
 		})

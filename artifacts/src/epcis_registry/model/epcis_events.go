@@ -22,6 +22,7 @@ type BizTransaction struct {
 	Value  string   `xml:",chardata"`
 }
 
+//missing quantityElements
 type ObjectEvent struct {
 	XMLName             xml.Name         `xml:"ObjectEvent"`
 	EventTime           time.Time        `xml:"eventTime"`
@@ -35,6 +36,22 @@ type ObjectEvent struct {
 	BizLocation         []string         `xml:"bizLocation>id"`    
 	BizTransactionList  []BizTransaction `xml:"bizTransactionList>bizTransaction"`    
 	ThingList           []Thing          `xml:"thingList>thing"`    
+}
+
+//missing quantityElements
+type AggregationEvent struct {
+	XMLName             xml.Name         `xml:"AggregationEvent"`
+	EventTime           time.Time        `xml:"eventTime"`
+	RecordTime          time.Time        `xml:"recordTime"`
+	EventTimeZoneOffset string           `xml:"eventTimeZoneOffset"`
+	ParentID            string           `xml:"parentID"`    
+	ChildEPCs           []string         `xml:"childEPCs>epc"`    
+	Action              string           `xml:"action"`
+	BizStep             string           `xml:"bizStep"`
+	Disposition         string           `xml:"disposition"`
+	ReadPoint           []string         `xml:"readPoint>id"`    
+	BizLocation         []string         `xml:"bizLocation>id"`    
+	BizTransactionList  []BizTransaction `xml:"bizTransactionList>bizTransaction"`    
 }
 
 func UnmarshalObjectEvent(data string) (*ObjectEvent, error) {
@@ -56,6 +73,24 @@ func UnmarshalObjectEvent(data string) (*ObjectEvent, error) {
 	return v, nil
 }
 
+func UnmarshalAggregationEvent(data string) (*AggregationEvent, error) {
+
+	v := &AggregationEvent{}
+
+	err := xml.Unmarshal([]byte(data), &v)
+	if err != nil {
+		fmt.Printf("error: %v", err)
+		return nil, err 
+	}
+
+	//trimming bizTransaction ids
+	//for index, elem := range v.BizTransactionList {
+ 	//	Value := strings.TrimSpace(elem.Value)
+    //    	v.BizTransactionList[index].Value = Value
+	//}	
+
+	return v, nil
+}
 
 
 

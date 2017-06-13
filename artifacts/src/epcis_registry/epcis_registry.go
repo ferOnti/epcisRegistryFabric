@@ -3,10 +3,10 @@ package main
 
 import (
 	//"encoding/json"
-	"time"
+	//"time"
 	"fmt"
-	"strconv"
-	"bytes"
+	//"strconv"
+	//"bytes"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 	"epcis_registry/model"
@@ -21,40 +21,9 @@ type EpcisChaincode struct {
 // Init initializes chaincode
 // ===========================
 func (t *EpcisChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
-/*
-	_, args := stub.GetFunctionAndParameters()
-	var A, B string    // Entities
-	var Aval, Bval int // Asset holdings
-	var err error
-
-	if len(args) != 4 {
-		return shim.Error("Incorrect number of arguments. Expecting 4")
-	}
-
-	// Initialize the chaincode
-	A = args[0]
-	Aval, err = strconv.Atoi(args[1])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding")
-	}
-	B = args[2]
-	Bval, err = strconv.Atoi(args[3])
-	if err != nil {
-		return shim.Error("Expecting integer value for asset holding")
-	}
-	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
-
-	// Write the state to the ledger
-	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-
-	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
-	if err != nil {
-		return shim.Error(err.Error())
-	}
-*/
+	/*
+	nothing to declare
+	*/
 	return shim.Success(nil)
 }
 
@@ -90,22 +59,53 @@ func (t *EpcisChaincode) addEpcThing(stub shim.ChaincodeStubInterface, args []st
 
 	data := args[0]
 
-	//unmarshal the data
-	v, err := model.UnmarshalObjectEvent(data);
-	if err != nil {
-		return shim.Error(err.Error())
+	//ObjectEvent
+	event1, err := model.UnmarshalObjectEvent(data);
+	if err == nil {
+		//iterate over all epcid in the epclist, and update each epcid
+		for _, epcid := range event1.EpcList {
+			//if (event1.AssetType=="thing") {
+				et := model.BuildEpcThingFromObjectEvent(epcid, event1)
+				err := worldstate.SaveEpcisThing(stub, et)
+				if err != nil {
+					return shim.Error(err.Error())
+				}
+			//} else {
+			//	ep := model.BuildEpcParentFromObjectEvent(epcid, event1)
+			//	err := worldstate.SaveEpcParent(stub, et)
+			//	if err != nil {
+			//		return shim.Error(err.Error())
+			//	}
+			//}
+		}	
+
+		//finally return success for Object Events
+		return shim.Success(nil)
 	}
 
-	//iterate over all epcid in the epclist, and update each epcid
-	for _, epcid := range v.EpcList {
-		et := model.BuildEpcThingFromObjectEvent(epcid, v)
-		err := worldstate.SaveEpcisThing(stub, et)
+	//AggregationEvent
+	event2, err := model.UnmarshalAggregationEvent(data);
+	if err == nil {
+		//iterate over all epcid in the epclist, and update each epcid
+		for _, epcid := range event2.ChildEPCs {
+			et := model.BuildEpcThingFromAggregationEvent(epcid, event2)
+			err := worldstate.SaveEpcisThing(stub, et)
+			if err != nil {
+				return shim.Error(err.Error())
+			}
+		}	
+
+		ep := model.BuildEpcParentFromAggregationEvent(event2)
+		err := worldstate.SaveEpcParent(stub, ep)
 		if err != nil {
 			return shim.Error(err.Error())
 		}
-	}	
 
-	return shim.Success(nil)
+		//finally return success for Object Events
+		return shim.Success(nil)
+	}
+
+	return shim.Error("Xml does not have any Valid Event")
 }
 
 

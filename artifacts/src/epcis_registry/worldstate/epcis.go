@@ -3,8 +3,7 @@ package worldstate
 import (
 	"encoding/json"
 	"time"
-	"strconv"
-	"math/rand"
+	//"strconv"
 	//"fmt"
 	"epcis_registry/model"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -23,9 +22,7 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 	var epcThingJSONasBytes []byte
 
 	now := time.Now()
-    rand.Seed( time.Now().UnixNano())
-    strRandom := strconv.Itoa( rand.Intn(100))
-	
+    
 	//if epcisThing already exists
 	if epcThingAsBytes != nil {
 		oldThing := &model.EpcThing{}
@@ -40,8 +37,9 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 		}
 
 		//always saving the time on the recordTime,
-		//to test, if sometime the peers will save differents recordtimes
-		oldThing.RecordTime = now 
+		if oldThing.AssetType=="thing" {
+			oldThing.RecordTime = now 
+		}
  
 		//BizStep
 		if et.BizStep != "" {
@@ -54,12 +52,12 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 		}
 
 		//BizLocation
-		if et.BizLocation != "" {
+		if oldThing.AssetType=="thing" && et.BizLocation != "" {
 			oldThing.BizLocation = et.BizLocation 
 		}
 
 		//EventTimeZoneOffset
-		if et.EventTimeZoneOffset != "" {
+		if oldThing.AssetType=="thing" && et.EventTimeZoneOffset != "" {
 			oldThing.EventTimeZoneOffset = et.EventTimeZoneOffset 
 		}
 
@@ -67,10 +65,9 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 		if et.Action != "" {
 			oldThing.Action = et.Action 
 		}
-		oldThing.Action = strRandom
 
 		//ReadPoint
-		if et.ReadPoint != "" {
+		if oldThing.AssetType=="thing" && et.ReadPoint != "" {
 			oldThing.ReadPoint = et.ReadPoint 
 		}
 
@@ -96,7 +93,7 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 		}
 
 		//Fields              []EpcThingfield `json:"fields"`   	
-		if et.Fields != nil {
+		if oldThing.AssetType=="thing" && et.Fields != nil {
 			for etIndex, _ := range et.Fields {
 				nameFound := 0
 				fieldName := et.Fields[etIndex].Fieldname
@@ -131,7 +128,93 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 
 		// ====  marshal it to JSON ====
 		et.RecordTime = now
-		et.Action = strRandom
+		epcThingJSONasBytes, err = json.Marshal(et)
+		if err != nil {
+			return err
+		}
+
+		// === Save epcThing to state ===
+		err = stub.PutState(Epcid, epcThingJSONasBytes)
+		if err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
+
+func SaveEpcParent(stub shim.ChaincodeStubInterface, et *model.EpcParent) error {
+	
+	Epcid := et.Epcid
+
+	// ==== Check if epcisThing already exists ====
+	epcThingAsBytes, err := stub.GetState(Epcid)
+	if err != nil {
+		return err
+	}
+
+	var epcThingJSONasBytes []byte
+
+	//if epcisThing already exists
+	if epcThingAsBytes != nil {
+		oldThing := &model.EpcParent{}
+
+	    if err := json.Unmarshal(epcThingAsBytes, &oldThing); err != nil {
+    		return err
+    	}
+
+		//EventTime		
+		if !et.EventTime.IsZero() {
+			oldThing.EventTime = et.EventTime 
+		}
+ 
+		//BizStep
+		if et.BizStep != "" {
+			oldThing.BizStep = et.BizStep 
+		}
+
+		//Disposition
+		if et.Disposition != "" {
+			oldThing.Disposition = et.Disposition 
+		}
+
+		//Action
+		if et.Action != "" {
+			oldThing.Action = et.Action 
+		}
+
+
+		//ChildEPCs      []string       `json:"ChildEPCs"`
+		if et.ChildEPCs != nil {
+			epcFound := 0
+
+			for _, childEpcEt := range et.ChildEPCs {
+				epcFound = 0
+				for _, childEpcOld := range oldThing.ChildEPCs {
+					if childEpcEt == childEpcOld {
+						epcFound = 1
+					}
+				}
+				if (epcFound==1) {
+					oldThing.ChildEPCs = append(oldThing.ChildEPCs, childEpcEt )
+				}
+			}	
+		}
+
+		epcThingJSONasBytes, err = json.Marshal(oldThing)
+		if err != nil {
+			return err
+		}
+
+		// === Update the epc Parent with new state ===
+		err = stub.PutState(Epcid, epcThingJSONasBytes)
+		if err != nil {
+			return err
+		}
+
+	} else {
+
+		// ====  marshal it to JSON ====
 		epcThingJSONasBytes, err = json.Marshal(et)
 		if err != nil {
 			return err
