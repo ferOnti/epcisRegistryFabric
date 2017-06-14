@@ -1,5 +1,9 @@
+.table>tbody>tr>td, .table>tfoot>tr>td {
+    padding: 15px;
+}
 .table tbody tr > td.success {
   background-color: #dff0d8 !important;
+  padding: 8px;
 }
 
 .table tbody tr > td.error {
@@ -56,6 +60,13 @@ div.stepNumber {
   width: 100%;
 }
 
+div.stepName {
+  text-align: center;
+  font-size: 85%;
+  padding: 8px;
+  width: 100%;
+}
+
 div.stepValue {
   text-align: center;
   font-size: 120%;
@@ -72,7 +83,11 @@ div.stepValue {
 .scrolling td, th {
   vertical-align: top;
   padding: 15px;
-  min-width: 100px;
+  min-width: 110px;
+}
+.scrolling-title td, th {
+  vertical-align: center;
+  padding: 8px;
 }
 .scrolling th {
   position: absolute;
