@@ -9,6 +9,40 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
+func GetChildrenNumberFromThing(stub shim.ChaincodeStubInterface, epcid string) (int,error) {
+	
+	//parents := 0
+	children := 0
+
+	// ==== Check if epcisThing already exists ====
+	epcThingAsBytes, err := stub.GetState(epcid)
+	if err != nil {
+		return 0, err
+	}
+
+	//if epcisThing already exists
+	if epcThingAsBytes != nil {
+		oldThing := &model.EpcThing{}
+
+	    if err := json.Unmarshal(epcThingAsBytes, &oldThing); err != nil {
+    		return 0, err
+    	}
+
+		//ParentIDs
+		//if et.ParentIDs != nil {
+		//	parents = len(et.ParentIDs)
+		//}
+
+		if oldThing.ChildEPCs != nil {
+			children = len(oldThing.ChildEPCs)
+		}
+
+	} else {
+		return children, nil
+	}
+	return children, nil
+}
+
 func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error {
 	
 	Epcid := et.Epcid

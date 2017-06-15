@@ -22,6 +22,7 @@ exports.home = function(req, res, next) {
         params.blockNumber = data.blockNumber
         params.txNum = data.txNum
         params.countThings = data.count
+        params.countCases = data.casesCount
         //convert byBizStep to mustache iterate format
         var byBizStep = []
         for (var key in data.byBizStep) {

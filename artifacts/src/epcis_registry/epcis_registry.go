@@ -64,19 +64,11 @@ func (t *EpcisChaincode) addEpcThing(stub shim.ChaincodeStubInterface, args []st
 	if err == nil {
 		//iterate over all epcid in the epclist, and update each epcid
 		for _, epcid := range event1.EpcList {
-			//if (event1.AssetType=="thing") {
-				et := model.BuildEpcThingFromObjectEvent(epcid, event1)
-				err := worldstate.SaveEpcisThing(stub, et)
-				if err != nil {
-					return shim.Error(err.Error())
-				}
-			//} else {
-			//	ep := model.BuildEpcParentFromObjectEvent(epcid, event1)
-			//	err := worldstate.SaveEpcParent(stub, et)
-			//	if err != nil {
-			//		return shim.Error(err.Error())
-			//	}
-			//}
+			et := model.BuildEpcThingFromObjectEvent(epcid, event1)
+			err := worldstate.SaveEpcisThing(stub, et)
+			if err != nil {
+				return shim.Error(err.Error())
+			}
 		}	
 
 		//finally return success for Object Events
@@ -86,6 +78,37 @@ func (t *EpcisChaincode) addEpcThing(stub shim.ChaincodeStubInterface, args []st
 	//AggregationEvent
 	event2, err := model.UnmarshalAggregationEvent(data);
 	if err == nil {
+
+		//iterate over all epcid in the epclist, to infers the LEVEL
+		maxChildren := 0
+		assetType := ""
+		for _, epcid := range event2.ChildEPCs {
+			children, err := worldstate.GetChildrenNumberFromThing(stub, epcid)
+
+			if err != nil {
+				return shim.Error(err.Error())
+			}
+			if children > maxChildren {
+				maxChildren = children
+			}
+		}	
+
+		assetType = fmt.Sprintf("type %d", maxChildren)
+	    switch maxChildren {
+		    case 0:
+		        assetType = "case"
+		    case 1:
+		        assetType = "pallet"
+		    case 2:
+		        assetType = "container"
+	    }
+
+		ep := model.BuildEpcParentFromAggregationEvent(event2, assetType)
+		err := worldstate.SaveEpcisThing(stub, ep)
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+
 		//iterate over all epcid in the epclist, and update each epcid
 		for _, epcid := range event2.ChildEPCs {
 			et := model.BuildEpcThingFromAggregationEvent(epcid, event2)
@@ -94,12 +117,6 @@ func (t *EpcisChaincode) addEpcThing(stub shim.ChaincodeStubInterface, args []st
 				return shim.Error(err.Error())
 			}
 		}	
-
-		ep := model.BuildEpcParentFromAggregationEvent(event2)
-		err := worldstate.SaveEpcParent(stub, ep)
-		if err != nil {
-			return shim.Error(err.Error())
-		}
 
 		//finally return success for Object Events
 		return shim.Success(nil)

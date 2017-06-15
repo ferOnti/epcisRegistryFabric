@@ -45,6 +45,26 @@ var byBizStep = function (groupLevel) {
 
 }
 
+var byBizStepCase = function (groupLevel) {
+	return new Promise((resolve, reject) => {
+		var keys = []
+		var options = {
+			"reduce" : true,
+			"group_level" : groupLevel
+		}
+		couchdb.view(chaincodeId, 'byBizStepCase', options, function(err, body){    
+	    	if (err){
+    	  		console.log(err)
+    	  		reject(err)
+    		} else {
+        		var rows = body.rows; //the rows returned
+        		resolve(body)
+    		}
+		})
+	})
+
+}
+
 var byBizTx = function (groupLevel, limit=100) {
 	return new Promise((resolve, reject) => {
 		var keys = []
@@ -78,6 +98,16 @@ module.exports.getStats = function () {
 			}
 		})
 		.then( () => {
+			return byBizStepCase(0)
+		})
+		.then( (data) => {
+			if (data.rows.length > 0) {
+				stats.casesCount = data.rows[0].value
+			} else {
+				stats.casesCount = 0
+			}
+		})
+		.then( () => {
 			return byBizStep(1)
 		})
 		.then((data) => {
@@ -104,7 +134,7 @@ module.exports.getStats = function () {
 		.then((data) => {
 			stats.blockNumber = data.BlockNum
 			stats.txNum = data.TxNum
-			//console.log(stats)
+			console.log(stats)
 			return (stats)
 		})
 	.catch( function(err) {
@@ -260,6 +290,9 @@ module.exports.createViews = function () {
 	var mapFunction = fs.readFileSync("./api/services/byBizStep.js",'utf8')
 	byBizStepMap = mapFunction.replace('CHAINCODE_ID', chaincodeId) 
 
+	mapFunction = fs.readFileSync("./api/services/byBizStepCase.js",'utf8')
+	byBizStepCaseMap = mapFunction.replace('CHAINCODE_ID', chaincodeId) 
+
 	mapFunction = fs.readFileSync("./api/services/byBizTx.js",'utf8')
 	byBizTxMap  = mapFunction.replace('CHAINCODE_ID', chaincodeId) 
 
@@ -274,6 +307,10 @@ module.exports.createViews = function () {
 	          		"views": {
 	             		byBizStep: {
 	                		"map": byBizStepMap,
+	                		"reduce" : "_sum"
+	             		},
+	             		byBizStepCase: {
+	                		"map": byBizStepCaseMap,
 	                		"reduce" : "_sum"
 	             		},
 	             		byBizTx: {
