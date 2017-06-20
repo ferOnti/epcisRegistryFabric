@@ -41,6 +41,7 @@
                 <td class="infobold">Move products to the Sales room</td>
                 <td class="infobold">Scan consumer packages on POS</td>
             </tr>
+            <!--
             <tr>
                 <th ><div></div></th>
                 <td><div class="stepName">step 1</div></td>
@@ -97,6 +98,7 @@
                 <td></td>
                 <td></td>
             </tr>
+            !-->
             <tr>
                 <th ><div>Pallet</div><div>(layer 2)</div></th>
                 <td></td>
@@ -104,14 +106,24 @@
                 <td></td>
                 <td class="step">
                     <div class="stepValue">{{data.step4}}</div>
+                    <div class="stepBiz">commissioning</div>
                     <div class="stepNumber">step 4</div>
                 </td>
                 <td class="step">
                     <div class="stepValue">{{data.step5}}</div>
+                    <div class="stepBiz">packing</div>
                     <div class="stepNumber">step 5</div>
                 </td>
-                <td></td>
-                <td></td>
+                <td class="step">
+                    <div class="stepValue">{{data.step6}}</div>
+                    <div class="stepBiz">shipping</div>
+                    <div class="stepNumber">step 6</div>
+                </td>
+                <td class="step">
+                    <div class="stepValue">{{data.step7}}</div>
+                    <div class="stepBiz">receiving</div>
+                    <div class="stepNumber">step 7</div>
+                </td>
                 <td class="step">
                     <div class="stepValue">{{data.step8}}</div>
                     <div class="stepNumber">step 8</div>
@@ -145,10 +157,12 @@
                 <td></td>
                 <td class="step">
                     <div class="stepValue">{{data.step2}}</div>
+                    <div class="stepBiz">packing</div>
                     <div class="stepNumber">step 2</div>
                 </td>
                 <td class="step">
                     <div class="stepValue">{{data.step3}}</div>
+                    <div class="stepBiz">commissioning</div>
                     <div class="stepNumber">step 3</div>
                 </td>
                 <td></td>
@@ -181,8 +195,8 @@
                 <th class="stepColumn" style="">Item<br>(layer 0)</th>
                 <td class="step">
                     <div class="stepValue">{{data.step1}}</div>
+                    <div class="stepBiz">commissioning</div>
                     <div class="stepNumber">step 1</div>
-                    <div class="stepNumber">commissioning</div>
                 </td>
                 <td></td>
                 <td></td>

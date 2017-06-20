@@ -9,6 +9,8 @@ import (
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
+//deprecated
+/*
 func GetChildrenNumberFromThing(stub shim.ChaincodeStubInterface, epcid string) (int,error) {
 	
 	//parents := 0
@@ -42,6 +44,33 @@ func GetChildrenNumberFromThing(stub shim.ChaincodeStubInterface, epcid string) 
 	}
 	return children, nil
 }
+*/
+
+func GetAssetTypeFromThing(stub shim.ChaincodeStubInterface, epcid string) (int, error) {
+	
+	assetType := 1
+
+	// ==== Check if epcisThing already exists ====
+	epcThingAsBytes, err := stub.GetState(epcid)
+	if err != nil {
+		return 0, err
+	}
+
+	//if epcisThing already exists
+	if epcThingAsBytes != nil {
+		oldThing := &model.EpcThing{}
+
+	    if err := json.Unmarshal(epcThingAsBytes, &oldThing); err != nil {
+    		return 0, err
+    	}
+
+		assetType = oldThing.AssetType
+
+	} else {
+		return assetType, nil
+	}
+	return assetType, nil
+}
 
 func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error {
 	
@@ -70,10 +99,14 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 			oldThing.EventTime = et.EventTime 
 		}
 
-		//always saving the time on the recordTime,
-		if oldThing.AssetType=="thing" {
-			oldThing.RecordTime = now 
+		//all things start as items, only if they are present as parent in an agreggation, 
+		//they will scalate to case, pallet, etc.
+
+		//if the assetType is not the Default value, we should change it
+		if et.AssetType !=0 {
+			oldThing.AssetType = et.AssetType
 		}
+		oldThing.RecordTime = now 
  
 		//BizStep
 		if et.BizStep != "" {
@@ -86,12 +119,12 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 		}
 
 		//BizLocation
-		if oldThing.AssetType=="thing" && et.BizLocation != "" {
-			oldThing.BizLocation = et.BizLocation 
-		}
+		if (et.BizLocation != "") {
+	    	oldThing.BizLocation  = et.BizLocation
+		}	
 
 		//EventTimeZoneOffset
-		if oldThing.AssetType=="thing" && et.EventTimeZoneOffset != "" {
+		if et.EventTimeZoneOffset != "" {
 			oldThing.EventTimeZoneOffset = et.EventTimeZoneOffset 
 		}
 
@@ -101,7 +134,7 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 		}
 
 		//ReadPoint
-		if oldThing.AssetType=="thing" && et.ReadPoint != "" {
+		if et.ReadPoint != "" {
 			oldThing.ReadPoint = et.ReadPoint 
 		}
 
@@ -127,7 +160,7 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 		}
 
 		//Fields              []EpcThingfield `json:"fields"`   	
-		if oldThing.AssetType=="thing" && et.Fields != nil {
+		if oldThing.AssetType==1 && et.Fields != nil {
 			for etIndex, _ := range et.Fields {
 				nameFound := 0
 				fieldName := et.Fields[etIndex].Fieldname
@@ -162,6 +195,12 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 
 		// ====  marshal it to JSON ====
 		et.RecordTime = now
+
+		//if thing is new, change to thing/item level by default
+		if et.AssetType==0 {
+			et.AssetType = 1
+		}
+
 		epcThingJSONasBytes, err = json.Marshal(et)
 		if err != nil {
 			return err
@@ -177,6 +216,8 @@ func SaveEpcisThing(stub shim.ChaincodeStubInterface, et *model.EpcThing) error 
 	return nil
 }
 
+//deprecated
+/*
 func SaveEpcParent(stub shim.ChaincodeStubInterface, et *model.EpcParent) error {
 	
 	Epcid := et.Epcid
@@ -263,4 +304,5 @@ func SaveEpcParent(stub shim.ChaincodeStubInterface, et *model.EpcParent) error 
 	}
 	return nil
 }
+*/
 

@@ -54,6 +54,24 @@
   background-color: #e0e0e0 !important;
 }
 
+.table.count{
+  width: 220px;
+}
+
+.table tbody tr > td.count, .table tbody tr > th.count{
+  background-color: #f8f8f8 !important;
+  width: 120px;
+  padding: 4px;
+}
+
+
+div.stepNumber {
+  text-align: center;
+  color: gray;
+  font-size: 80%;
+  width: 100%;
+}
+
 div.stepNumber {
   text-align: center;
   font-size: 85%;

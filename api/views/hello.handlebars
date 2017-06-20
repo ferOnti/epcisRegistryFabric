@@ -33,20 +33,32 @@
     <div>CouchDB     <strong>{{couchdbUrl}}</strong>     </div>
     <br>
     <div>BlockNumber <strong>{{blockNumber}}</strong>  with {{txNum}} txs.  </div>
-    <div>Count Things <strong>{{countThings}}</strong>    </div>
-    <div>Count Cases <strong>{{countCases}}</strong>    </div>
     
     <br>
+    <table class="table table-bordered count">
+      <tr><th class="count">Level</th><th class="count">count</th></tr>
+      <tr><td class="count">items/things</td><td class="count">{{countThings}}</td></tr>
+      <tr><td class="count">cases</td><td class="count">{{countCases}}</td></tr>
+      <tr><td class="count">pallets</td><td class="count">{{countPallets}}</td></tr>
+      <tr><td class="count">error</td><td class="count">{{countErrors}}</td></tr>
+    </table>
+
+    <br>
     <table class="table table-bordered">
-      <tr><th>BizStep</th><th>count</th></tr>
+      <tr><th>Level</th><th>Location</th><th>BizStep</th><th>count</th></tr>
       {{#byBizStep}}
-      <tr><td>{{key}}</td><td>{{value}}</td></tr>
+      <tr>
+        <td>{{level}}</td>
+        <td>{{location}}</td>
+        <td>{{bizStep}}</td>
+        <td>{{value}}</td>
+       </tr>
       {{/byBizStep}}
     </table>
     
     <br>
     <table class="table table-bordered">
-      <tr><th>BizTransaction</th><th>BizStep</th><th>count</th></tr>
+      <tr><th>Level</th><th>BizTransaction</th><th>BizStep</th><th>count</th></tr>
       {{#byBizTx}}
       <tr>
         <td>

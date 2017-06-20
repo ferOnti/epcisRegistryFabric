@@ -15,7 +15,7 @@ type EpcThingfield struct {
 }
 
 type EpcThing struct {
-	AssetType           string         `json:"assetType"` 
+	AssetType           int         `json:"assetType"` 
 	Epcid               string         `json:"epcid"` 
 	EventTime           time.Time      `json:"eventTime"`    
 	RecordTime          time.Time      `json:"recordTime"`    
@@ -32,7 +32,7 @@ type EpcThing struct {
 }
 
 type EpcParent struct {
-	AssetType           string         `json:"assetType"` 
+	AssetType           int         `json:"assetType"` 
 	Epcid               string         `json:"epcid"` 
 	EventTime           time.Time      `json:"eventTime"`    
 	BizStep             string         `json:"bizStep"`    
@@ -43,7 +43,8 @@ type EpcParent struct {
 
 func BuildEpcThingFromObjectEvent(epcid string, v *ObjectEvent) (*EpcThing) {		
 	et := &EpcThing{}
-	et.AssetType           = "item"
+	//this function will return the object as 0, because in saveThing will change to thing or case or pallet
+	et.AssetType           = 0 
 	et.Epcid               = epcid
 	et.BizStep             = v.BizStep
 	et.EventTime           = v.EventTime
@@ -83,9 +84,12 @@ func BuildEpcThingFromObjectEvent(epcid string, v *ObjectEvent) (*EpcThing) {
 	return et
 }
 
+//build the children from an aggregation Event
 func BuildEpcThingFromAggregationEvent(epcid string, v *AggregationEvent) (*EpcThing) {		
 	et := &EpcThing{}
-	et.AssetType       = "thing"
+	//should put empty, since the thing already exists in the aggregation
+	//'thing' shouldn't when the children are cases or pallets, etc.
+	//et.AssetType       = 1 //"thing"
 	et.Epcid           = epcid
 	et.BizStep         = v.BizStep
 	et.EventTime       = v.EventTime
@@ -99,7 +103,8 @@ func BuildEpcThingFromAggregationEvent(epcid string, v *AggregationEvent) (*EpcT
 	parents = append(parents, v.ParentID)
 	et.ParentIDs           = parents
 
-	et.ChildEPCs       = v.ChildEPCs
+	//children should be empty since, this epcid is a child
+	//et.ChildEPCs       = v.ChildEPCs
 
 	if (len(v.ReadPoint) == 1) {
 		et.ReadPoint           = v.ReadPoint[0]
@@ -139,7 +144,7 @@ func BuildEpcParentFromAggregationEvent(v *AggregationEvent) (*EpcParent) {
 }
 */
 
-func BuildEpcParentFromAggregationEvent(v *AggregationEvent, assetType string) (*EpcThing) {		
+func BuildEpcParentFromAggregationEvent(v *AggregationEvent, assetType int) (*EpcThing) {		
 
 	et := &EpcThing{}
 	et.AssetType       = assetType
@@ -169,6 +174,8 @@ func BuildEpcParentFromAggregationEvent(v *AggregationEvent, assetType string) (
 	return et
 }
 
+//deprecated?
+/*
 func BuildEpcParentFromObjectEvent(epcid string, v *ObjectEvent) (*EpcParent) {		
 	ep := &EpcParent{}
 	ep.AssetType       = "parent"
@@ -187,5 +194,5 @@ func BuildEpcParentFromObjectEvent(epcid string, v *ObjectEvent) (*EpcParent) {
 
 	return ep
 }
-
+*/
 

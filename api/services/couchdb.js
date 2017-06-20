@@ -25,6 +25,7 @@ var getStateDb = function () {
 		console.log(err.message)
     })
 }
+
 var byBizStep = function (groupLevel) {
 	return new Promise((resolve, reject) => {
 		var keys = []
@@ -42,9 +43,9 @@ var byBizStep = function (groupLevel) {
     		}
 		})
 	})
-
 }
 
+/*
 var byBizStepCase = function (groupLevel) {
 	return new Promise((resolve, reject) => {
 		var keys = []
@@ -64,6 +65,7 @@ var byBizStepCase = function (groupLevel) {
 	})
 
 }
+*/
 
 var byBizTx = function (groupLevel, limit=100) {
 	return new Promise((resolve, reject) => {
@@ -89,34 +91,39 @@ var byBizTx = function (groupLevel, limit=100) {
 module.exports.getStats = function () {
 	console.log("getStats")
 	var stats = {}
-	return byBizStep(0)
+	return byBizStep(1)
 		.then((data) => {
-			if (data.rows.length > 0) {
-				stats.count = data.rows[0].value
-			} else {
-				stats.count = 0
-			}
-		})
-		.then( () => {
-			return byBizStepCase(0)
-		})
-		.then( (data) => {
-			if (data.rows.length > 0) {
-				stats.casesCount = data.rows[0].value
-			} else {
-				stats.casesCount = 0
-			}
-		})
-		.then( () => {
-			return byBizStep(1)
-		})
-		.then((data) => {
-			stats.byBizStep = {}
+			stats.counts = {}
 			for (var i=0; i<data.rows.length; i++ ) {
 				var key = data.rows[i].key[0]
 				var value = data.rows[i].value
+				stats.counts[key] = value
+			}
+
+		})
+		//.then( () => {
+		//	return byBizStepCase(0)
+		//})
+		//.then( (data) => {
+		//	if (data.rows.length > 0) {
+		//		stats.casesCount = data.rows[0].value
+		//	} else {
+		//		stats.casesCount = 0
+		//	}
+		//})
+		.then( () => {
+			return byBizStep(3)
+		})
+		.then((data) => {
+			stats.byBizStep = data.rows;
+			/*
+			for (var i=0; i<data.rows.length; i++ ) {
+			console.log(data.rows[i])
+				var key = data.rows[i].key
+				var value = data.rows[i].value
 				stats.byBizStep[key] = value
 			}
+			*/
 		})
 		.then( () => {
 			return byBizTx(2, 50)
@@ -290,8 +297,8 @@ module.exports.createViews = function () {
 	var mapFunction = fs.readFileSync("./api/services/byBizStep.js",'utf8')
 	byBizStepMap = mapFunction.replace('CHAINCODE_ID', chaincodeId) 
 
-	mapFunction = fs.readFileSync("./api/services/byBizStepCase.js",'utf8')
-	byBizStepCaseMap = mapFunction.replace('CHAINCODE_ID', chaincodeId) 
+	//mapFunction = fs.readFileSync("./api/services/byBizStepCase.js",'utf8')
+	//byBizStepCaseMap = mapFunction.replace('CHAINCODE_ID', chaincodeId) 
 
 	mapFunction = fs.readFileSync("./api/services/byBizTx.js",'utf8')
 	byBizTxMap  = mapFunction.replace('CHAINCODE_ID', chaincodeId) 
@@ -309,10 +316,10 @@ module.exports.createViews = function () {
 	                		"map": byBizStepMap,
 	                		"reduce" : "_sum"
 	             		},
-	             		byBizStepCase: {
-	                		"map": byBizStepCaseMap,
-	                		"reduce" : "_sum"
-	             		},
+	             		//byBizStepCase: {
+	                	//	"map": byBizStepCaseMap,
+	                	//	"reduce" : "_sum"
+	             		//},
 	             		byBizTx: {
 	                		"map": byBizTxMap,
 	                		"reduce" : "_sum"
@@ -371,18 +378,65 @@ module.exports.supplyChainDashboard = function(id, includeDocs) {
 		var keys = []
 		var options = {
 			"reduce" : true,
-			"group_level" : 1
+			"group_level" : 3
 		}
+
 		couchdb.view(chaincodeId, 'byBizStep', options, function(err, body){    
 	    	if (err){
     	  		console.log(err)
     	  		reject(err)
     		} else {
         		var rows = body.rows; //the rows returned
+        		console.log(rows)
         		if (body.rows && body.rows.length >0) {
 	        		result.step1 = body.rows[0].value;
         		} else {
         			result.step1 = 0
+        		}
+        		for (row of rows) {
+        			//step 1
+	        		if (row.key[0] == 1 && 
+	        			row.key[1] == 'urn:epc:id:sgln:01234567.4650.0001' &&
+	        			row.key[2] == 'urn:epcglobal:cbv:bizstep:commissioning' ) {
+	        			result.step1 = row.value
+	        		}
+        			//step 2
+	        		if (row.key[0] == 2 && 
+	        			row.key[1] == 'urn:epc:id:sgln:01234567.4650.0001' &&
+	        			row.key[2] == 'urn:epcglobal:cbv:bizstep:packing' ) {
+	        			result.step2 = row.value
+	        		}
+        			//step 3
+	        		if (row.key[0] == 2 && 
+	        			row.key[1] == 'urn:epc:id:sgln:01234567.4650.0001' &&
+	        			row.key[2] == 'urn:epcglobal:cbv:bizstep:commissioning' ) {
+	        			result.step3 = row.value
+	        		}
+        			//step 4
+	        		if (row.key[0] == 3 && 
+	        			row.key[1] == 'urn:epc:id:sgln:01234567.4650.0001' &&
+	        			row.key[2] == 'urn:epcglobal:cbv:bizstep:commissioning' ) {
+	        			result.step4 = row.value
+	        		}
+        			//step 5
+	        		if (row.key[0] == 3 && 
+	        			row.key[1] == 'urn:epc:id:sgln:01234567.4650.0001' &&
+	        			row.key[2] == 'urn:epcglobal:cbv:bizstep:packing' ) {
+	        			result.step5 = row.value
+	        		}
+        			//step 6
+	        		if (row.key[0] == 3 && 
+	        			row.key[1] == 'urn:epc:id:sgln:01234567.4650.0001' &&
+	        			row.key[2] == 'urn:epcglobal:cbv:bizstep:shipping' ) {
+	        			result.step6 = row.value
+	        		}
+        			//step 7
+	        		if (row.key[0] == 3 && 
+	        			row.key[1] == 'urn:epc:id:sgln:09876543.0000.9876' &&
+	        			row.key[2] == 'urn:epcglobal:cbv:bizstep:receiving' ) {
+	        			result.step7 = row.value
+	        		}
+
         		}
         		resolve(result)
     		}
@@ -390,5 +444,7 @@ module.exports.supplyChainDashboard = function(id, includeDocs) {
 	})
 
 }
+
+
 
 

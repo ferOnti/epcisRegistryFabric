@@ -21,12 +21,17 @@ exports.home = function(req, res, next) {
     return couchdb.getStats().then( (data) => {
         params.blockNumber = data.blockNumber
         params.txNum = data.txNum
-        params.countThings = data.count
-        params.countCases = data.casesCount
+        params.countThings  = data.counts['1'] ? data.counts['1'] : 0
+        params.countCases   = data.counts['2'] ? data.counts['2'] : 0
+        params.countPallets = data.counts['3'] ? data.counts['3'] : 0
+        params.countErrors  = data.counts['0'] ? data.counts['0'] : 0
+
+        var levels = ["error", "items", "cases", "pallets", "containers"]
         //convert byBizStep to mustache iterate format
         var byBizStep = []
-        for (var key in data.byBizStep) {
-          byBizStep.push( {"key": key, "value": data.byBizStep[key]})
+        for (var i in data.byBizStep) {
+          var row = data.byBizStep[i]
+          byBizStep.push( {"level": levels[row.key[0]], "location": row.key[1], "bizStep": row.key[2], "value": row.value})
         }
         params.byBizStep   = byBizStep
 

@@ -80,30 +80,20 @@ func (t *EpcisChaincode) addEpcThing(stub shim.ChaincodeStubInterface, args []st
 	if err == nil {
 
 		//iterate over all epcid in the epclist, to infers the LEVEL
-		maxChildren := 0
-		assetType := ""
+		maxAssetType := 1 //default assetType
 		for _, epcid := range event2.ChildEPCs {
-			children, err := worldstate.GetChildrenNumberFromThing(stub, epcid)
+			assetType, err := worldstate.GetAssetTypeFromThing(stub, epcid)
 
 			if err != nil {
 				return shim.Error(err.Error())
 			}
-			if children > maxChildren {
-				maxChildren = children
+			if (assetType > maxAssetType) {
+				maxAssetType = assetType
 			}
 		}	
 
-		assetType = fmt.Sprintf("type %d", maxChildren)
-	    switch maxChildren {
-		    case 0:
-		        assetType = "case"
-		    case 1:
-		        assetType = "pallet"
-		    case 2:
-		        assetType = "container"
-	    }
-
-		ep := model.BuildEpcParentFromAggregationEvent(event2, assetType)
+		maxAssetType = maxAssetType +1
+		ep := model.BuildEpcParentFromAggregationEvent(event2, maxAssetType)
 		err := worldstate.SaveEpcisThing(stub, ep)
 		if err != nil {
 			return shim.Error(err.Error())
